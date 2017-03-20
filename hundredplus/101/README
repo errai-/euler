@@ -1,0 +1,62 @@
+
+The task is here interpreted so that we have N measurements of the coordinates x and y
+for which the expectation value is approx. constant through the experiment. The variance in the
+measurements comes from the various measurement uncertainties that are here unknown.
+
+r = sqrt( x^2 + y^2 ), for the value of r we return a value in which x and y are
+averaged over the available data. The covariance matrix is calculated in the ordinary
+way. For the error,
+
+dr = (xdx + ydy)/r,
+
+where dr -> total error, dx -> x error and dy -> y error. What makes this inconvenient
+is that we have non-zero covariance elements present. If the variables obeyed a Gaussian
+distribution, the off-diagonal elements would not be a problem. However, here we can
+have arbitrary distributions in the x and y directions. The most universal way to handle
+this is to diagonalize the covariance matrix and move to a new basis. For exotic
+distributions of x and y it is not exactly clear, what we even mean by the error.
+A generic way to proceed is to assume the diagonal elements of a diagonalized error
+matrix as the general error values. We have
+
+x^t M x = x P P^-1 M P P^-1 x,
+
+where P has M eigenvectors as its rows. P M P^-1 is diagonal, with M eigenvalues
+at the diagonal. We should normalize the eigenvectors, so P^-1 = P^t. By making the
+transformation x' = P^t x, we finally have our new basis. Here the errors dx' and
+dy' can be set simply to the square roots of the diagonal elements. In the transformation
+r stays constant, but dx and dy need to be transformed to the new basis. x and y
+receive the values of the averaged x and y.
+
+The significance can be found from
+
+S = r*r/(xdx + ydy)
+
+/////////////////////
+Usage:
+
+'make main'
+
+and then
+
+'./main'
+
+In main.cpp three example cases are implemented. One with x-y somewhat correlated and one with
+no correlation. In the third example x and y are fully correlated (but random).
+Similar examples can be easily done more, using random numbers.
+
+The test cases are in the way unphysical that the x and y values follow a uniform
+distribution in some given interval. For testing purposes this is not a problem:
+we can still very well observe how the correlations and such things behave.
+Most importantly, when x and y are fully correlated, the error estimation
+is reduced significantly by a proper transformation
+
+To finish, we use the library Eigen to do the heavy lifting with matrices. We could
+have also used root for many of these functions. However, root is less portable and
+may need some fixing at the end user machine. Eigen fits the present exercise better.
+
+Hmm, after clearing out some bugs it seems that the different error calculations give
+primarily the same results. It could be that some more clever tricks are necessary,
+but in the scope of this exercise the present solution should be fine. The alternative
+error is a different way to take the off-diagonal values into account, not 100%
+confident whether this is OK. At least the whole solution served as an opportunity to
+play around with Eigen.
